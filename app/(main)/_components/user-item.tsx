@@ -30,7 +30,7 @@ const UserItem = () => {
                 </div>
             </DropdownMenuTrigger>
             <DropdownMenuContent
-            className='w-80'
+            className='w-80 '
             align='start'
             alignOffset={11}
             forceMount 
@@ -56,7 +56,7 @@ const UserItem = () => {
                 <DropdownMenuSeparator/>
                     <DropdownMenuItem asChild className='w-full cursor-pointer text-muted-foreground'>
                         <SignOutButton>
-            ~                
+                            Log out                
                         </SignOutButton>
                     </DropdownMenuItem>
             </DropdownMenuContent>
