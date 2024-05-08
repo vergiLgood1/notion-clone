@@ -3,18 +3,45 @@ import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { Doc, Id } from "./_generated/dataModel";
 
-export const get = query({
-  handler: async (ctx) => {
+// export const get = query({
+//   handler: async (ctx) => {
+//     const identity = await ctx.auth.getUserIdentity();
+
+//     if (!identity) {
+//       throw new Error("You must be logged in to create a document");
+//     }
+
+//     const documents = await ctx.db.query("documents").collect();
+
+//     return documents;
+
+//   },
+// });
+
+export const getSidebar = query({
+  args: {
+    parentDocument: v.optional(v.id("documents")),
+  },
+  handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
 
     if (!identity) {
       throw new Error("You must be logged in to create a document");
     }
 
-    const documents = await ctx.db.query("documents").collect();
+    const userId = identity.subject;
 
-    return documents;
+    const documents = await ctx.db
+      .query("documents")
+      .withIndex("by_user_parent", (query) =>
+        query.eq("userId", userId).eq("parentDocument", args.parentDocument)
+      )
+      .filter((query) => query.eq(query.field("isArchived"), false)
+    )
+      .order("desc")
+      .collect();
 
+      return documents;
   },
 });
 
