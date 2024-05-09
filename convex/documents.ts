@@ -15,7 +15,7 @@ import { Doc, Id } from "./_generated/dataModel";
 
 //     return documents;
 
-//   },
+//   }, 
 // });
 
 export const archive = mutation({
@@ -24,7 +24,7 @@ export const archive = mutation({
         const identity = await ctx.auth.getUserIdentity();
 
         if (!identity) {
-          throw new Error("You must be logged in to create a document");
+          throw new Error("Not authenticated");
         }
     
         const userId = identity.subject;
@@ -61,6 +61,8 @@ export const archive = mutation({
             isArchived: true,
         });
 
+        recursiveArchive(args.id);
+
         return document;
     }
 })
@@ -73,7 +75,7 @@ export const getSidebar = query({
     const identity = await ctx.auth.getUserIdentity();
 
     if (!identity) {
-      throw new Error("You must be logged in to create a document");
+      throw new Error("Not authenticated");
     }
 
     const userId = identity.subject;
@@ -101,7 +103,7 @@ export const create = mutation({
     const identity = await ctx.auth.getUserIdentity();
 
     if (!identity) {
-      throw new Error("You must be logged in to create a document");
+      throw new Error("Not authenticated");
     }
 
     const userId = identity.subject;
@@ -116,3 +118,104 @@ export const create = mutation({
     return document;
   },
 });
+
+export const getTrash = query({
+  handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+
+    if (!identity) {
+      throw new Error("Not authenticated");
+    }
+
+    const userId = identity.subject;
+
+    const documents = await ctx.db
+      .query("documents")
+      .withIndex("by_user", (query) => query.eq("userId", userId)).filter((query) => query.eq(query.field("isArchived"), true)).order("desc").collect();
+
+      return documents;
+  }
+});
+
+export const restore = mutation({
+  args: { id: v.id("documents") },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+
+    if (!identity) {
+      throw new Error("Not authenticated");
+    }
+
+    const userId = identity.subject;
+
+    const existingDocument = await ctx.db.get(args.id);
+
+    if(!existingDocument) {
+      throw new Error("Not found");
+    }
+    if(existingDocument.userId !== userId){
+      throw new Error("Unauthorized");
+    }
+
+    const recuriveRestore = async (documentId: Id<"documents">) => {
+      const children = await ctx.db
+       .query("documents")
+       .withIndex("by_user_parent", (query) =>
+          query.eq("userId", userId).eq("parentDocument", documentId)
+        )
+       .collect();
+
+       for (const child of children){
+          await ctx.db.patch(child._id, {
+            isArchived: false,
+          });
+
+          await recuriveRestore(child._id)
+       }
+    }
+    
+    const options: Partial<Doc<"documents">> = {
+      isArchived: false,
+    }
+
+    if(existingDocument.parentDocument){
+      const parent = await ctx.db.get(existingDocument.parentDocument)
+      if(parent?.isArchived){
+        options.parentDocument = undefined
+      }
+    }
+
+    const document = await ctx.db.patch(args.id, options);
+
+    recuriveRestore(args.id)
+
+    return document;
+  }
+});
+
+export const remove = mutation({
+  args: { id: v.id("documents") },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+
+    if (!identity) {
+      throw new Error("Not authenticated");
+    }
+
+    const userId = identity.subject;
+
+    const existingDocument = await ctx.db.get(args.id);
+
+    if(!existingDocument) {
+      throw new Error("Not found");
+    }
+
+    if(existingDocument.userId !== userId) {
+      throw new Error("Unauthorized");
+    }
+
+    const document = await ctx.db.delete(args.id);
+
+    return document;
+  }
+})
