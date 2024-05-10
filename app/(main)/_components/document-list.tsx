@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Item } from "./item";
 import { cn } from "@/lib/utils";
-import { FileIcon } from "lucide-react";
+import { FileIcon, FileText } from "lucide-react";
 
 interface DocumentListProps {
   parentDocumentId?: Id<"documents">;
@@ -72,7 +72,7 @@ export const DocumentList = ({
             id={document._id}
             onClick={() => onRedirect(document._id)}
             label={document.title}
-            icon={FileIcon}
+            icon={FileText}
             documentIcon={document.icon}
             active={params.documentId === document._id}
             level={level}

@@ -7,7 +7,7 @@ import { Id } from "@/convex/_generated/dataModel";
 import { cn } from "@/lib/utils";
 import { useUser } from "@clerk/clerk-react";
 import { useMutation } from "convex/react";
-import { ChevronDown, ChevronRight, LucideIcon, MoreHorizontal, Plus, Trash } from "lucide-react";
+import { ChevronDown, ChevronRight, FileText, LucideIcon, MoreHorizontal, Plus, Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
@@ -84,6 +84,7 @@ export const Item = ({
   };
 
   const ChevronIcon = expanded ? ChevronDown : ChevronRight;
+  
 
   return (
     <div
@@ -98,10 +99,12 @@ export const Item = ({
       {!!id && (
         <div
           role="button"
-          className="h-full rounded-sm hover:bg-neutral-300 dark:bg-neutral-600 mr-1"
+          className="group h-full rounded-sm hover:bg-neutral-300 dark:bg-neutral-600 mr-1 ml-1"
           onClick={handleExpand}
         >
-          <ChevronIcon className="h-4 w-4 shrink-0 text-muted-foreground/50" />
+          <ChevronIcon className="h-4 w-4 shrink-0 text-muted-foreground/50"/>
+          {/* <FileText className=" h-4 w-4 shrink-0 text-muted-foreground/50 group-hover:hidden"/>
+          <ChevronIcon className="hidden h-4 w-4 shrink-0 text-muted-foreground/50 group-hover:block" /> */}
         </div>
       )}
       {documentIcon ? (
@@ -167,7 +170,7 @@ Item.Skeleton = function ItemSkeleton({ level }: { level?: number}) {
         <div style={{
             paddingLeft: level ? `${(level * 12) + 25}px` : '12px'
         }}
-        className="flex gap-x2 py-[3px]"
+        className="flex gap-x-2 py-[3px]"
         
         >
             <Skeleton className="h-4 w-4"/>
