@@ -10,6 +10,7 @@ import { ModalProvider } from "@/components/providers/modal-provider";
 const inter = Inter({ subsets: ["latin"] });
 
 import "./globals.css";
+import { EdgeStoreProvider } from "@/lib/edgestore";
 
 export const metadata: Metadata = {
   title: "Jotion",
@@ -18,8 +19,8 @@ export const metadata: Metadata = {
     icon: [
       {
         media: "(prefers-color-scheme: light)",
-        url: "/logoDark.svg",
-        href: "/logoDark.svg",
+        url: "/public/assets/icons/logo.svg",
+        href: "/public/assets/icons/logo.svg",
       },
       {
         media: "(prefers-color-scheme: dark)",
@@ -39,17 +40,19 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
         <ConvexClientProvider>
+          <EdgeStoreProvider>
           <ThemeProvider
             attribute="class"
             defaultTheme="system"
             enableSystem
             disableTransitionOnChange
             storageKey="jotion-theme-2"
-          >
+            >
             <Toaster position="bottom-center"/>
             <ModalProvider/>
             {children}
           </ThemeProvider>
+          </EdgeStoreProvider>
         </ConvexClientProvider>
       </body>
     </html>
