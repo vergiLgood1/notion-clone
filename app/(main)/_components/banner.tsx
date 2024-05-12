@@ -45,30 +45,28 @@ export const Banner = ({
     };
 
     return(
-    <div className="w-full bg-rose-500 text-center text-sm p-2 text-white flex items-center gap-x-2 justify-center ">
+        <div className="w-full bg-rose-500 text-center text-sm p-2 text-white flex items-center gap-x-2 justify-center">
         <p>
-            This page is in the trash.
+          This page is in the Trash.
         </p>
         <Button
-            size="sm"
-            onClick={onRestore}
-            variant="outline"
-            className="border-white bg-transparent hover:bg-primary/5 text-white hover:text-white p-1 px-2 h-auto font-normal "
+          size="sm"
+          onClick={onRestore}
+          variant="outline"
+          className="border-white bg-transparent hover:bg-primary/5 text-white hover:text-white p-1 px-2 h-auto font-normal"
         >
-            Restore page
+          Restore page
         </Button>
-        <ConfirmModal onConfirm={() => onRemove()}>
-        <Button
-            role="button"
+        <ConfirmModal onConfirm={onRemove}>
+          <Button
             size="sm"
-            onClick={onRemove}
             variant="outline"
             className="border-white bg-transparent hover:bg-primary/5 text-white hover:text-white p-1 px-2 h-auto font-normal"
-        >
-            Delete page
-        </Button>
+          >
+            Delete forever
+          </Button>
         </ConfirmModal>
-    </div>
+      </div>
 
     )
 }
