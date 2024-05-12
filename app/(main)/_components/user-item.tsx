@@ -19,7 +19,7 @@ const UserItem = () => {
             <DropdownMenuTrigger asChild>
                 <div role='button' className='flex items-center text-sm p-3 w-full hover:bg-primary/5'>
                     <div className='gap-x-2 flex items-center max-w-[150px]'>
-                        <div className='rounded-sm bg-[#37352f17] p-1'>
+                        <div className='rounded-sm bg-neutral-300 dark:bg-neutral-600 p-1'>
                         <Avatar className='h-5 w-5'>
                             <AvatarImage src={user?.imageUrl}/>
                         </Avatar>
